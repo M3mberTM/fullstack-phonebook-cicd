@@ -3,7 +3,7 @@ run-name: Testing and Linting
 on:
   push:
     branches:
-      - main
+      - master
 jobs:
   pipeline:
     runs-on: ubuntu-latest
