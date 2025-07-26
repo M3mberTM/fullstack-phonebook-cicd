@@ -16,6 +16,6 @@ jobs:
       - name: Installing dependencies
         run: npm install
       - name: Eslint Validation
-        run: npm eslint
+        run: npm run eslint
       - name: Test
-        run: npm test
+        run: npm run test
