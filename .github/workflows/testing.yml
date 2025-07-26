@@ -1,0 +1,21 @@
+name: Validation
+run-name: Testing and Linting
+on:
+  push:
+    branches:
+      - main
+jobs:
+  pipeline:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Installing dependencies
+        run: npm install
+      - name: Eslint Validation
+        run: npm eslint
+      - name: Test
+        run: npm test
