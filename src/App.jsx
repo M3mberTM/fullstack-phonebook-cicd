@@ -1,90 +1,11 @@
 import React from 'react'
 import { useState, useEffect } from 'react'
 import personsService from './services/persons.js'
+import PersonForm from './components/PersonForm.jsx'
+import Persons from './components/Persons.jsx'
+import Alert from './components/Alert.jsx'
+import Filter from './components/Filter.jsx'
 
-
-const Filter = ({ newFilter, handleFilterChange }) => {
-    return (
-        <div>filter show with <input value={newFilter} onChange={handleFilterChange}/></div>
-    )
-}
-
-
-const Alert = ({ alert }) => {
-    const error = {
-        color: 'red',
-        background: 'lightgrey',
-        fontSize: 20,
-        borderStyle: 'solid',
-        borderRadius: 5,
-        padding: 10,
-        marginBottom: 10
-    }
-
-    const notif = {
-        color: 'green',
-        background: 'lightgrey',
-        fontSize: 20,
-        borderStyle: 'solid',
-        borderRadius: 5,
-        padding: 10,
-        marginBottom: 10
-    }
-    if (alert.message !== null) {
-        return (
-            <div style={alert.isError ? error : notif}>
-                {alert.message}
-            </div>
-        )
-    } else {
-        return (
-            <div>
-
-            </div>
-        )
-    }
-
-}
-
-const PersonForm = ({ newName, handleNameChange, newPhone, handlePhoneChange, handleSubmit }) => {
-    return (
-        <form>
-            <div>
-                name: <input value={newName} onChange={handleNameChange}/>
-            </div>
-            <div>number: <input value={newPhone} onChange={handlePhoneChange}/></div>
-            <div>
-                <button type="submit" onClick={handleSubmit}>add</button>
-            </div>
-        </form>
-    )
-}
-
-const Persons = ({ persons, newFilter, handleDelete }) => {
-    return (
-        <div>
-            <ul>
-                {persons.map((person) => {
-                    if (person.name.toLowerCase().includes(newFilter.toLowerCase())) {
-                        return <Person key={person.id} name={person.name} number={person.number}
-                            handleDelete={() => handleDelete(person.id)}/>
-                    }
-
-                })}
-            </ul>
-        </div>
-    )
-}
-
-const Person = ({ name, number, handleDelete }) => {
-    return (
-        <li>
-            {name} {number}
-            <button onClick={handleDelete}>Delete</button>
-
-        </li>
-    )
-}
 const App = () => {
     const [persons, setPersons] = useState([
         { name: 'Arto Hellas', number: '040-123456', id: 1 },
@@ -99,8 +20,6 @@ const App = () => {
             })
     }, [])
 
-    const [newName, setNewName] = useState('')
-    const [newPhone, setNewPhone] = useState('')
     const [newFilter, setNewFilter] = useState('')
     const [newAlert, setNewAlert] = useState({ message: null, isError: true })
 
@@ -111,14 +30,6 @@ const App = () => {
 
 
     }
-    const handleNameChange = (event) => {
-        setNewName(event.target.value)
-    }
-
-    const handlePhoneChange = (event) => {
-        setNewPhone(event.target.value)
-    }
-
     const handleDelete = (id) => {
         console.log(`deleting ${id}`)
         if (window.confirm('Delete ' + persons.find(p => p.id === id).name + '?')) {
@@ -155,8 +66,7 @@ const App = () => {
 
     }
 
-    const handleSubmit = (event) => {
-        event.preventDefault()
+    const handleSubmit = (newName, newPhone) => {
         const newPerson = {
             name: newName,
             number: newPhone,
@@ -180,8 +90,6 @@ const App = () => {
                         setPersons(persons.map((person) => {
                             return person.id !== response.data.id ? person : response.data
                         }))
-                        setNewName('')
-                        setNewPhone('')
 
                         setNewAlert({ message: 'Value was updated', isError: false })
 
@@ -197,8 +105,6 @@ const App = () => {
             personsService.create(newPerson)
                 .then(response => {
                     setPersons(persons.concat(response.data))
-                    setNewName('')
-                    setNewPhone('')
                     setNewAlert({ message: `Value was added ${response.data.name}`, isError: false })
 
                     setTimeout(() => {
@@ -217,17 +123,13 @@ const App = () => {
         }
     }
 
-
     return (
         <div>
             <h2>Phonebook</h2>
             <Alert alert={newAlert}/>
             <Filter newFilter={newFilter} handleFilterChange={handleFilterChange}/>
 
-            <h2>add a new</h2>
-            <PersonForm handleSubmit={handleSubmit} handleNameChange={handleNameChange}
-                handlePhoneChange={handlePhoneChange} newName={newName} newPhone={newPhone}/>
-            <h2>Numbers</h2>
+            <PersonForm handleSubmit={handleSubmit}/>
             <Persons newFilter={newFilter} persons={persons} handleDelete={(id) => handleDelete(id)}/>
         </div>
     )

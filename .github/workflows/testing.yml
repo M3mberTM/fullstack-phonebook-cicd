@@ -15,8 +15,6 @@ jobs:
           node-version: '20'
       - name: Installing dependencies
         run: npm install
-      - name: Starting server
-        run: npm run server
       - name: Eslint Validation
         run: npm run eslint
       - name: Test
